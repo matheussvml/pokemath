@@ -1,0 +1,126 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://AtlasTexture/player_idle.tres" type="Texture" id=2]
+[ext_resource path="res://AtlasTexture/player_lado_walk_1.tres" type="Texture" id=3]
+[ext_resource path="res://AtlasTexture/player_walk_costa.tres" type="Texture" id=4]
+[ext_resource path="res://AtlasTexture/player_costa_run_1.tres" type="Texture" id=5]
+[ext_resource path="res://AtlasTexture/player_idle_costa.tres" type="Texture" id=6]
+[ext_resource path="res://AtlasTexture/player_walk_1.tres" type="Texture" id=7]
+[ext_resource path="res://AtlasTexture/player_walk.tres" type="Texture" id=8]
+[ext_resource path="res://AtlasTexture/player_idle_lado.tres" type="Texture" id=9]
+[ext_resource path="res://AtlasTexture/player_lado_walk.tres" type="Texture" id=10]
+[ext_resource path="res://AtlasTexture/player_lado_run_1.tres" type="Texture" id=11]
+[ext_resource path="res://AtlasTexture/player_lado_run.tres" type="Texture" id=12]
+[ext_resource path="res://AtlasTexture/player_costa_run.tres" type="Texture" id=13]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends KinematicBody2D
+class_name Player
+
+signal dead
+
+var velocity = Vector2()
+
+export var speed = 120
+var looking = \"up\"
+var dead = false
+
+func _ready():
+	pass
+
+
+func _process(delta):
+	velocity.x = 0
+	velocity.y = 0
+	if Input.is_action_pressed(\"ui_up\"):
+		$AnimatedSprite.play(\"costa_walk\")
+		velocity.y = -speed
+		looking = \"up\"
+	if Input.is_action_pressed(\"ui_down\"):
+		$AnimatedSprite.play(\"walk\")
+		velocity.y = speed
+		looking = \"down\"
+	if Input.is_action_pressed(\"ui_right\"):
+		$AnimatedSprite.play(\"lado_walk\")
+		$AnimatedSprite.flip_h = true
+		velocity.x = speed
+	if Input.is_action_pressed(\"ui_left\"):
+		$AnimatedSprite.play(\"lado_walk\")
+		velocity.x = -speed
+		$AnimatedSprite.flip_h = false
+	
+	if not dead:
+		$AnimatedSprite.play(looking)
+	else:
+		$AnimatedSprite.play(\"dead\")
+
+	if velocity == Vector2(0, 0):
+		$AnimatedSprite.playing = false
+
+	velocity = move_and_slide(velocity)
+"
+
+[sub_resource type="CapsuleShape2D" id=1]
+height = 14.0
+
+[sub_resource type="SpriteFrames" id=2]
+animations = [ {
+"frames": [ ExtResource( 13 ), ExtResource( 5 ) ],
+"loop": true,
+"name": "costa_run",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "costa_walk",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 2 ) ],
+"loop": true,
+"name": "idle",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "idle_costa",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 9 ) ],
+"loop": true,
+"name": "idle_lado",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 12 ), ExtResource( 11 ) ],
+"loop": true,
+"name": "lado_run",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 10 ), ExtResource( 3 ) ],
+"loop": true,
+"name": "lado_walk",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 8 ), ExtResource( 7 ) ],
+"loop": true,
+"name": "walk",
+"speed": 5.0
+} ]
+
+[node name="KinematicBody2D" type="KinematicBody2D"]
+script = SubResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, -1 )
+shape = SubResource( 1 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+position = Vector2( 1, -1 )
+scale = Vector2( 1.53571, 1.53571 )
+frames = SubResource( 2 )
+animation = "costa_run"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+limit_left = -300
+limit_top = -500
+limit_right = 300
+limit_bottom = 500
