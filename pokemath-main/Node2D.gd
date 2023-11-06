@@ -5,4 +5,4 @@ func _ready():
 
 func  _process(delta):
 	if Input.is_action_pressed("ui_accept"):
-		pass #get_tree().change_scene(
+		get_tree().change_scene("res://cenas/Level001.tscn")

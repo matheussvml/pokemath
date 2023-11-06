@@ -20,10 +20,14 @@ func _process(delta):
 		$AnimatedSprite.play("costa_walk")
 		velocity.y = -speed
 		looking = "up"
+	if Input.is_action_just_released("ui_up"):
+		$AnimatedSprite.play("idle_costa")
 	if Input.is_action_pressed("ui_down"):
 		$AnimatedSprite.play("walk")
 		velocity.y = speed
 		looking = "down"
+	if Input.is_action_just_released("ui_down"):
+		$AnimatedSprite.play("idle")
 	if Input.is_action_pressed("ui_right"):
 		$AnimatedSprite.play("lado_walk")
 		$AnimatedSprite.flip_h = true
@@ -33,12 +37,10 @@ func _process(delta):
 		velocity.x = -speed
 		$AnimatedSprite.flip_h = false
 	
-	if not dead:
-		$AnimatedSprite.play(looking)
-	else:
-		$AnimatedSprite.play("dead")
+	
 
 	if velocity == Vector2(0, 0):
 		$AnimatedSprite.playing = false
+#		$AnimatedSprite.play("idle_costa")
 
 	velocity = move_and_slide(velocity)
